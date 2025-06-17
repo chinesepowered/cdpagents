@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cdpWallet } from '@/lib/cdp-wallet';
+import { walletManager } from '@/lib/wallet-manager';
 import { WalletInfo, ApiResponse } from '@/types';
 
 export async function GET(request: NextRequest) {
   try {
     // Initialize wallet if not already done
-    if (!cdpWallet['initialized']) {
-      await cdpWallet.initialize();
-    }
+    await walletManager.initialize();
     
-    const walletInfo = await cdpWallet.getWalletInfo();
+    const walletInfo = await walletManager.getWalletInfo();
     
     const response: ApiResponse<WalletInfo> = {
       success: true,
@@ -36,15 +34,13 @@ export async function POST(request: NextRequest) {
     const { action, ...params } = await request.json();
     
     // Initialize wallet if not already done
-    if (!cdpWallet['initialized']) {
-      await cdpWallet.initialize();
-    }
+    await walletManager.initialize();
     
     let result;
     
     switch (action) {
       case 'send_payment':
-        result = await cdpWallet.sendPayment(
+        result = await walletManager.sendPayment(
           params.recipientAddress,
           params.amount,
           params.currency
@@ -52,11 +48,11 @@ export async function POST(request: NextRequest) {
         break;
         
       case 'get_transaction_history':
-        result = await cdpWallet.getTransactionHistory(params.limit || 10);
+        result = await walletManager.getTransactionHistory(params.limit || 10);
         break;
         
       case 'split_payment':
-        result = await cdpWallet.splitPayment(
+        result = await walletManager.splitPayment(
           params.totalAmount,
           params.currency,
           params.recipients
@@ -64,11 +60,15 @@ export async function POST(request: NextRequest) {
         break;
         
       case 'estimate_fee':
-        result = await cdpWallet.estimateNetworkFee(
+        result = await walletManager.estimateNetworkFee(
           params.recipientAddress,
           params.amount,
           params.currency
         );
+        break;
+
+      case 'request_faucet':
+        result = await walletManager.requestFaucetFunds();
         break;
         
       default:

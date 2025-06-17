@@ -47,6 +47,9 @@
     "@aws-sdk/client-bedrock-runtime": "^3.470.0",
     "@modelcontextprotocol/sdk": "^0.4.0"
   },
+  "optionalDependencies": {
+    "@coinbase/coinbase-sdk": "^0.0.15"
+  },
   "devDependencies": {
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",

@@ -17,6 +17,7 @@ import MetricCard from '@/components/MetricCard';
 import RevenueChart from '@/components/RevenueChart';
 import ToolsOverview from '@/components/ToolsOverview';
 import PaymentFlow from '@/components/PaymentFlow';
+import WalletModeToggle from '@/components/WalletModeToggle';
 
 export default function HomePage() {
   const [metrics, setMetrics] = useState({
@@ -107,6 +108,18 @@ export default function HomePage() {
             color="indigo"
             isLoading={isLoading}
           />
+        </motion.div>
+
+        {/* Wallet Mode Toggle - Prominent for Judges */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <WalletModeToggle onModeChange={(mode) => {
+            console.log(`Switched to ${mode} mode`);
+            // Could refresh metrics here if needed
+          }} />
         </motion.div>
 
         {/* Main Content Grid */}
