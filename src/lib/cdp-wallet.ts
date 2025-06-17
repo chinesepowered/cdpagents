@@ -1,41 +1,80 @@
-import { Coinbase, Wallet, WalletData, Transfer, Asset } from '@coinbase/coinbase-sdk';
 import { WalletConfig, WalletInfo, TransactionInfo, PaymentResponse } from '@/types';
 import config from './config';
 
+// Mock CDP SDK types for development
+interface MockWallet {
+  getId(): string;
+  getDefaultAddress(): MockAddress;
+  faucet(): Promise<void>;
+  export(): any;
+  createTransfer(params: any): Promise<MockTransfer>;
+  listTransfers(): Promise<MockTransfer[]>;
+}
+
+interface MockAddress {
+  getId(): string;
+  listBalances(): Promise<MockBalance[]>;
+}
+
+interface MockBalance {
+  asset: { assetId: string };
+  amount: string;
+}
+
+interface MockTransfer {
+  getId(): string;
+  getTransactionHash(): string;
+  getAmount(): string;
+  getAsset(): { assetId: string };
+  getFromAddress(): string;
+  getToAddress(): string;
+  getStatus(): string;
+  wait(): Promise<void>;
+}
+
 export class CDPWalletManager {
-  private coinbase: Coinbase;
-  private wallet: Wallet | null = null;
+  private wallet: MockWallet | null = null;
   private initialized = false;
 
   constructor(private walletConfig: WalletConfig = config.cdp) {
-    // Initialize Coinbase SDK
-    Coinbase.configure({
-      apiKeyName: this.walletConfig.apiKeyName,
-      privateKey: this.walletConfig.privateKey,
-    });
-    this.coinbase = Coinbase;
+    console.log('💰 CDP Wallet Manager initialized (mock mode for development)');
   }
 
   async initialize(): Promise<void> {
     try {
-      // Try to load existing wallet or create new one
-      if (process.env.CDP_WALLET_DATA) {
-        // Load from saved wallet data
-        const walletData: WalletData = JSON.parse(process.env.CDP_WALLET_DATA);
-        this.wallet = await Wallet.import(walletData);
-      } else {
-        // Create new wallet
-        this.wallet = await Wallet.create({ networkId: this.walletConfig.networkId });
-        
-        // Save wallet data for future use (in production, store securely)
-        console.log('💡 Save this wallet data to CDP_WALLET_DATA environment variable:');
-        console.log(JSON.stringify(this.wallet.export()));
-      }
+      // Mock wallet initialization for development
+      this.wallet = {
+        getId: () => 'mock-wallet-id',
+        getDefaultAddress: () => ({
+          getId: () => '0x1234567890abcdef1234567890abcdef12345678',
+          listBalances: async () => [
+            { asset: { assetId: 'USDC' }, amount: '100.50' },
+            { asset: { assetId: 'ETH' }, amount: '0.25' },
+          ],
+        }),
+        faucet: async () => {
+          console.log('🚰 Mock faucet funding wallet...');
+        },
+        export: () => ({ mockWalletData: true }),
+        createTransfer: async (params: any) => ({
+          getId: () => `transfer_${Date.now()}`,
+          getTransactionHash: () => `0x${Math.random().toString(16).substr(2, 64)}`,
+          getAmount: () => params.amount.toString(),
+          getAsset: () => ({ assetId: params.assetId || 'USDC' }),
+          getFromAddress: () => '0x1234567890abcdef1234567890abcdef12345678',
+          getToAddress: () => params.destination,
+          getStatus: () => 'complete',
+          wait: async () => {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          },
+        }),
+        listTransfers: async () => [],
+      };
 
-      await this.wallet.faucet(); // Fund wallet on testnet
+      await this.wallet.faucet();
       this.initialized = true;
       
-      console.log(`✅ CDP Wallet initialized: ${this.wallet.getDefaultAddress()?.getId()}`);
+      console.log(`✅ CDP Wallet initialized (mock): ${this.wallet.getDefaultAddress().getId()}`);
     } catch (error) {
       console.error('❌ Failed to initialize CDP wallet:', error);
       throw error;
@@ -46,16 +85,16 @@ export class CDPWalletManager {
     this.ensureInitialized();
     
     const address = this.wallet!.getDefaultAddress();
-    const balances = await address!.listBalances();
+    const balances = await address.listBalances();
     
     const balanceMap: Record<string, string> = {};
     balances.forEach((balance) => {
-      balanceMap[balance.asset.assetId] = balance.amount.toString();
+      balanceMap[balance.asset.assetId] = balance.amount;
     });
 
     return {
       id: this.wallet!.getId(),
-      address: address!.getId(),
+      address: address.getId(),
       networkId: this.walletConfig.networkId,
       balance: balanceMap,
     };
@@ -69,29 +108,26 @@ export class CDPWalletManager {
     this.ensureInitialized();
 
     try {
-      const asset = await Asset.fetch(this.walletConfig.networkId, currency);
       const transfer = await this.wallet!.createTransfer({
         amount: parseFloat(amount),
-        assetId: asset.assetId,
+        assetId: currency,
         destination: recipientAddress,
       });
 
       await transfer.wait();
-
-      const transaction = transfer.getTransaction();
       
       return {
         success: true,
-        transactionId: transaction.getTransactionHash(),
+        transactionId: transfer.getTransactionHash(),
         receipt: {
           id: transfer.getId(),
-          transactionHash: transaction.getTransactionHash(),
+          transactionHash: transfer.getTransactionHash(),
           amount,
           currency,
-          fromAddress: this.wallet!.getDefaultAddress()!.getId(),
+          fromAddress: this.wallet!.getDefaultAddress().getId(),
           toAddress: recipientAddress,
           timestamp: new Date(),
-          networkFee: transaction.getTransactionHash() // Placeholder - get actual fee
+          networkFee: '0.001' // Mock network fee
         }
       };
     } catch (error) {
@@ -107,18 +143,17 @@ export class CDPWalletManager {
     this.ensureInitialized();
 
     try {
-      const address = this.wallet!.getDefaultAddress();
       const transfers = await this.wallet!.listTransfers();
 
       return transfers.slice(0, limit).map((transfer) => ({
-        hash: transfer.getTransactionHash() || '',
+        hash: transfer.getTransactionHash(),
         status: this.mapTransferStatus(transfer.getStatus()),
-        amount: transfer.getAmount().toString(),
+        amount: transfer.getAmount(),
         currency: transfer.getAsset().assetId,
-        fromAddress: transfer.getFromAddress() || '',
-        toAddress: transfer.getToAddress() || '',
+        fromAddress: transfer.getFromAddress(),
+        toAddress: transfer.getToAddress(),
         timestamp: new Date(), // Placeholder - get actual timestamp
-        networkFee: '0', // Placeholder - get actual fee
+        networkFee: '0.001', // Placeholder - get actual fee
       }));
     } catch (error) {
       console.error('❌ Failed to get transaction history:', error);

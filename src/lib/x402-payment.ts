@@ -128,18 +128,19 @@ export class X402PaymentManager {
 
   // Generate HTTP 402 response
   generate402Response(paymentInstruction: X402PaymentInstruction): Response {
-    return new Response('Payment Required', {
+    const bodyContent = JSON.stringify({
+      error: 'Payment Required',
+      code: 402,
+      payment: paymentInstruction,
+    });
+
+    return new Response(bodyContent, {
       status: 402,
       headers: {
         'Content-Type': 'application/json',
         'WWW-Authenticate': `x402-payment amount="${paymentInstruction.amount}" currency="${paymentInstruction.currency}" recipient="${paymentInstruction.recipient}" facilitator="${paymentInstruction.facilitator}"`,
         'X-Payment-Required': JSON.stringify(paymentInstruction),
       },
-      body: JSON.stringify({
-        error: 'Payment Required',
-        code: 402,
-        payment: paymentInstruction,
-      }),
     });
   }
 

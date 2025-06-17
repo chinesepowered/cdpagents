@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "mcp:dev": "ts-node src/mcp/server.ts",
     "mcp:build": "tsc -p tsconfig.mcp.json",
-    "demo": "concurrently \"npm run dev\" \"npm run mcp:dev\""
+    "demo": "concurrently \"pnpm run dev\" \"pnpm run mcp:dev\""
   },
   "dependencies": {
     "next": "14.0.4",

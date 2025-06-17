@@ -366,7 +366,7 @@ const bountyBotConfig: MCPServerConfig = {
 // Auto-complete expired bounties (background job)
 setInterval(async () => {
   const now = new Date();
-  for (const [id, bounty] of bounties.entries()) {
+  for (const [id, bounty] of Array.from(bounties.entries())) {
     if (bounty.status === 'open' && now > bounty.deadline) {
       if (bounty.submissions.length === 0) {
         // No submissions - refund participants
