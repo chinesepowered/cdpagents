@@ -2,6 +2,14 @@
 
 A complete, production-ready template for monetizing MCP (Model Context Protocol) servers using x402 micropayments and CDP Wallet for automated treasury management.
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="src/app/public/screen1.png" width="250" alt="Screenshot 1"/>
+  <img src="src/app/public/screen2.png" width="250" alt="Screenshot 2"/>
+  <img src="src/app/public/screen3.png" width="250" alt="Screenshot 3"/>
+</p>
+
 ## 🌟 Overview
 
 This template demonstrates the power of composable, revenue-generating infrastructure by combining:
