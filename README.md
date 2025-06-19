@@ -358,20 +358,8 @@ npm run build
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🏆 Hackathon Submission
-
-This project demonstrates:
-
-- ✅ **Effective use of both x402 and CDP Wallet**
-- ✅ **Complete payment loop: revenue in → payment out**
-- ✅ **Real-world relevance: solves MCP monetization need**
-- ✅ **Composability: reusable flows and modular logic**
-- ✅ **Creativity: novel financial primitives for AI agents**
-- ✅ **Technical execution: clean, working code with demo**
-- ✅ **Amazon Bedrock integration** (bonus feature)
-
 ### Demo Video
-[📹 Watch the Demo](./demo-video.md) - See the complete payment loop in action!
+[📹 Watch the Demo](https://www.youtube.com/watch?v=O6C-1J83T-o&feature=youtu.be) - See the complete payment loop in action!
 
 ## 🎉 Get Started
 
@@ -387,9 +375,3 @@ npm run demo
 ```
 
 Visit `http://localhost:3000` to see your monetization dashboard! 🚀
-
----
-
-**Built with ❤️ for the x402pay + CDP Wallet Hackathon**
-
-*Need help? Check out our [documentation](./docs/) or open an issue!*
