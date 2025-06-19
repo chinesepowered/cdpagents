@@ -14,6 +14,8 @@
 
 **AI agents are incredibly powerful, but developers can't make money from them.** Most AI tools are either free demos or expensive enterprise solutions. There is no easy way to charge users fairly and distribute revenue automatically, forcing developers to spend months building payment infrastructure before earning their first dollar.
 
+Credit Lincoln's X post for this idea
+
 ## The Solution
 
 This template provides the entire infrastructure for monetizing AI agents and MCP (Model Context Protocol) servers. It's a complete, production-ready solution using x402 micropayments and CDP Wallet for automated treasury management.
