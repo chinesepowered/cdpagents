@@ -118,7 +118,6 @@ payment-logs/
 # Demo recordings
 demo-recording/
 *.mp4
-*.mov
 
 # Local configuration overrides
 config.local.js
