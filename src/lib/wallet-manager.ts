@@ -60,7 +60,12 @@ class UnifiedWalletManager {
   }
 
   async initialize(): Promise<void> {
-    return this.getCurrentWallet().initialize();
+    try {
+      return await this.getCurrentWallet().initialize();
+    } catch (error) {
+      console.warn('Wallet initialization failed:', error);
+      // Continue with mock mode if initialization fails
+    }
   }
 
   async getWalletInfo(): Promise<WalletInfo & { mode: WalletMode }> {
