@@ -1,7 +1,5 @@
 # 🏆 MCP Monetization Template
 
-**Winner of Best Use of x402pay + CDP Wallet** 🥇
-
 A complete, production-ready template for monetizing MCP (Model Context Protocol) servers using x402 micropayments and CDP Wallet for automated treasury management.
 
 ## 🌟 Overview
