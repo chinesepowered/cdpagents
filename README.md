@@ -359,7 +359,7 @@ npm run build
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### Demo Video
-[📹 Watch the Demo](https://www.youtube.com/watch?v=O6C-1J83T-o&feature=youtu.be) - See the complete payment loop in action!
+[📹 Watch the Demo](https://youtu.be/IGilwOMdCXw) - See the complete payment loop in action!
 
 ## 🎉 Get Started
 
